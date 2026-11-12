@@ -20,6 +20,7 @@ OBJS = \
 	guc-file.o \
 	guc_funcs.o \
 	guc_tables.o \
+	halo_pmc.o \
 	help_config.o \
 	injection_point.o \
 	pg_config.o \

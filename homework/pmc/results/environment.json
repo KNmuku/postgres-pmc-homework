@@ -1,0 +1,15 @@
+{
+  "date": "2026-11-12",
+  "kernel": "6.18.33.2-microsoft-standard-WSL2",
+  "cpu": {
+    "vendor_id": "AuthenticAMD",
+    "cpu family": "26",
+    "model": "68",
+    "model name": "AMD Ryzen 9 9950X3D 16-Core Processor"
+  },
+  "compiler": "gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0",
+  "postgres": "postgres (PostgreSQL) 20devel",
+  "base_commit": "cf44f3fa19",
+  "branch": "homework/halo-pmc",
+  "perf_event_paranoid": "2"
+}

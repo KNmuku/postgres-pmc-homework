@@ -23,6 +23,8 @@
 
 #include "postgres.h"
 
+#include "utils/halo_pmc.h"
+
 #include <math.h>
 #include <limits.h>
 
@@ -61,6 +63,7 @@ static HashJoinTuple ExecParallelHashTupleAlloc(HashJoinTable hashtable,
 												size_t size,
 												dsa_pointer *shared);
 static void MultiExecPrivateHash(HashState *node);
+static void MultiExecPrivateHashImpl(HashState *node);
 static void MultiExecParallelHash(HashState *node);
 static inline HashJoinTuple ExecParallelHashFirstTuple(HashJoinTable hashtable,
 													   int bucketno);
@@ -138,6 +141,31 @@ MultiExecHash(HashState *node)
 static void
 MultiExecPrivateHash(HashState *node)
 {
+	volatile int pmc_depth = -1;
+
+	if (!halo_pmc_enabled || halo_pmc_loading ||
+		halo_pmc_target != HALO_PMC_TARGET_HASH)
+	{
+		MultiExecPrivateHashImpl(node);
+		return;
+	}
+	PG_TRY();
+	{
+		pmc_depth = halo_pmc_query_begin("HashBuild");
+		MultiExecPrivateHashImpl(node);
+	}
+	PG_CATCH();
+	{
+		halo_pmc_query_abort(pmc_depth < 0 ? 0 : pmc_depth);
+		PG_RE_THROW();
+	}
+	PG_END_TRY();
+	halo_pmc_query_end(pmc_depth, (uint64_t) node->hashtable->totalTuples);
+}
+
+static void
+MultiExecPrivateHashImpl(HashState *node)
+{
 	PlanState  *outerNode;
 	HashJoinTable hashtable;
 	TupleTableSlot *slot;
@@ -170,6 +198,9 @@ MultiExecPrivateHash(HashState *node)
 		slot = ExecProcNode(outerNode);
 		if (TupIsNull(slot))
 			break;
+		/* Snapshot only tuple hashing/insertion, excluding child fetch. */
+		if (halo_pmc_sampling)
+			halo_pmc_segment_begin();
 		/* We have to compute the hash value */
 		econtext->ecxt_outertuple = slot;
 
@@ -207,6 +238,8 @@ MultiExecPrivateHash(HashState *node)
 			nullTuples += 1;
 		}
 		/* else we can discard the tuple immediately */
+		if (halo_pmc_sampling)
+			halo_pmc_segment_end();
 	}
 
 	/* resize the hash table if needed (NTUP_PER_BUCKET exceeded) */

@@ -1,0 +1,5 @@
+GNU make PostgreSQL build and local installation: PASS
+Meson/Ninja PostgreSQL executable build: PASS
+PostgreSQL regressions: 243 passed
+Database integration tests: 19 passed
+PMC core and ASan/UBSan tests: PASS

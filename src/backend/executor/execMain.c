@@ -60,6 +60,7 @@
 #include "tcop/utility.h"
 #include "utils/acl.h"
 #include "utils/backend_status.h"
+#include "utils/halo_pmc.h"
 #include "utils/lsyscache.h"
 #include "utils/partcache.h"
 #include "utils/rls.h"
@@ -308,10 +309,34 @@ void
 ExecutorRun(QueryDesc *queryDesc,
 			ScanDirection direction, uint64 count)
 {
-	if (ExecutorRun_hook)
-		(*ExecutorRun_hook) (queryDesc, direction, count);
-	else
-		standard_ExecutorRun(queryDesc, direction, count);
+	volatile int pmc_depth = -1;
+
+	/* Keep the normal disabled path free of counter system calls. */
+	if (!halo_pmc_enabled || halo_pmc_loading ||
+		halo_pmc_target != HALO_PMC_TARGET_EXECUTOR)
+	{
+		if (ExecutorRun_hook)
+			(*ExecutorRun_hook) (queryDesc, direction, count);
+		else
+			standard_ExecutorRun(queryDesc, direction, count);
+		return;
+	}
+
+	PG_TRY();
+	{
+		pmc_depth = halo_pmc_query_begin("ExecutorRun");
+		if (ExecutorRun_hook)
+			(*ExecutorRun_hook) (queryDesc, direction, count);
+		else
+			standard_ExecutorRun(queryDesc, direction, count);
+	}
+	PG_CATCH();
+	{
+		halo_pmc_query_abort(pmc_depth < 0 ? 0 : pmc_depth);
+		PG_RE_THROW();
+	}
+	PG_END_TRY();
+	halo_pmc_query_end(pmc_depth, queryDesc->estate->es_processed);
 }
 
 void
@@ -1763,7 +1788,11 @@ ExecutePlan(QueryDesc *queryDesc,
 		/*
 		 * Execute the plan and obtain a tuple
 		 */
+		if (halo_pmc_sampling)
+			halo_pmc_segment_begin();
 		slot = ExecProcNode(planstate);
+		if (halo_pmc_sampling)
+			halo_pmc_segment_end();
 
 		/*
 		 * if the tuple is null, then we assume there is nothing more to

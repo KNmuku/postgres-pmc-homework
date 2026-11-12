@@ -1,0 +1,7 @@
+/results/initdb.log
+/results/start.log
+/results/build.log
+/results/install.log
+/results/configure.log
+/core
+__pycache__/

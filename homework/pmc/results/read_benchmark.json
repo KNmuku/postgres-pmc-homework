@@ -1,0 +1,1 @@
+{"rdpmc_available":true,"cpu":0,"events":4,"snapshots_per_repeat":50000,"repeats":7,"read_ns_median":845.355,"rdpmc_ns_median":57.062,"speedup":14.815,"read_path_read_calls":350000,"rdpmc_path_read_calls":0}

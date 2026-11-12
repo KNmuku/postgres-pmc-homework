@@ -5,6 +5,7 @@ backend_sources += files(
   'guc.c',
   'guc_funcs.c',
   'guc_tables.c',
+  'halo_pmc.c',
   'help_config.c',
   'injection_point.c',
   'pg_config.c',

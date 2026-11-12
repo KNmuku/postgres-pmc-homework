@@ -78,6 +78,7 @@
 #include "tcop/tcopprot.h"
 #include "tcop/utility.h"
 #include "utils/guc_hooks.h"
+#include "utils/halo_pmc.h"
 #include "utils/injection_point.h"
 #include "utils/lsyscache.h"
 #include "utils/memutils.h"
@@ -4479,6 +4480,9 @@ PostgresMain(const char *dbname, const char *username)
 	}
 
 	SetProcessingMode(NormalProcessing);
+
+	/* Define PMC options in the child, after session GUCs and fork setup. */
+	halo_pmc_init();
 
 	/*
 	 * Now all GUC states are fully set up.  Report them to client if

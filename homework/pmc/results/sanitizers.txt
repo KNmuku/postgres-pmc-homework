@@ -1,0 +1,14 @@
+make BUILD=../../.pmc-build/pmc-sanitize CFLAGS='-O1 -g -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined -fno-omit-frame-pointer' test
+make[1]: Entering directory '/home/muku/schoolfile/opensoft/project1/postgres-pmc-homework-https/homework/pmc'
+gcc -D_GNU_SOURCE -DHALO_PMC_STANDALONE -I../../src/include -O1 -g -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined -fno-omit-frame-pointer tests/test_core.c ../../src/backend/utils/misc/halo_pmc.c -Wl,--wrap=syscall -Wl,--wrap=read -Wl,--wrap=__read_chk -Wl,--wrap=mmap -o ../../.pmc-build/pmc-sanitize/test_core
+gcc -D_GNU_SOURCE -DHALO_PMC_STANDALONE -I../../src/include -O1 -g -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined -fno-omit-frame-pointer tests/bench_read.c ../../src/backend/utils/misc/halo_pmc.c -o ../../.pmc-build/pmc-sanitize/bench_read
+../../.pmc-build/pmc-sanitize/test_core
+PASS scaling, zero-running guard and PMC-width sign extension
+PASS permission failure and idempotent cleanup
+CPU AuthenticAMD family=26 model=68; valid mask=0xf
+PASS repeated measurements are intervals rather than cumulative totals
+PASS RDPMC <= read() <= RDPMC and 10000 fast snapshots without read() calls
+PASS partial-read errors, cancel and cleanup
+PASS unsupported optional events, mmap failure, syscall fallback and fork-owner guard
+ALL CORE TESTS PASSED
+make[1]: Leaving directory '/home/muku/schoolfile/opensoft/project1/postgres-pmc-homework-https/homework/pmc'

@@ -1,0 +1,11 @@
+gcc -D_GNU_SOURCE -DHALO_PMC_STANDALONE -I../../src/include -O2 -g -std=c11 -Wall -Wextra -Werror tests/test_core.c ../../src/backend/utils/misc/halo_pmc.c -Wl,--wrap=syscall -Wl,--wrap=read -Wl,--wrap=__read_chk -Wl,--wrap=mmap -o ../../.pmc-build/pmc-tests/test_core
+gcc -D_GNU_SOURCE -DHALO_PMC_STANDALONE -I../../src/include -O2 -g -std=c11 -Wall -Wextra -Werror tests/bench_read.c ../../src/backend/utils/misc/halo_pmc.c -o ../../.pmc-build/pmc-tests/bench_read
+../../.pmc-build/pmc-tests/test_core
+PASS scaling, zero-running guard and PMC-width sign extension
+PASS permission failure and idempotent cleanup
+CPU AuthenticAMD family=26 model=68; valid mask=0xf
+PASS repeated measurements are intervals rather than cumulative totals
+PASS RDPMC <= read() <= RDPMC and 10000 fast snapshots without read() calls
+PASS partial-read errors, cancel and cleanup
+PASS unsupported optional events, mmap failure, syscall fallback and fork-owner guard
+ALL CORE TESTS PASSED

@@ -1,0 +1,20 @@
+PASS disabled mode preserves query output and produces no PMC report
+PASS HashBuild interval has real nonzero counters with no loop sampling
+PASS paired target-code snapshots with method=read; no per-iteration enable/disable
+PASS paired target-code snapshots with method=rdpmc; no per-iteration enable/disable
+PASS paired target-code snapshots with method=auto; no per-iteration enable/disable
+PASS pmc_name lookup and course event-list spelling halo_pmc.events
+PASS pmc_name lookup and course event-list spelling halo_pmc_list
+PASS pmc_name lookup and course event-list spelling halo_watch_pmc_list
+PASS CPU-matched AMD raw store-dispatch event is loaded from pmc_name
+PASS CPU-incompatible raw event is rejected before producing misleading counts
+PASS quoted catalog event names still produce valid report JSON
+PASS connection startup GUC placeholders retain the configured event list
+PASS nested SPI executors are included once in the outer interval
+PASS caught nested error discards partial measurement and next query recovers
+PASS bad catalog name does not leave the next measurement nested or enabled
+PASS cursor FETCH invocations use independent count/time deltas
+PASS 12 connections maintain independent backend counter state
+PASS PMC settings require superuser privileges
+PASS turning observation off stops subsequent measurements
+ALL 19 POSTGRESQL INTEGRATION TESTS PASSED

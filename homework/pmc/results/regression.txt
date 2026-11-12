@@ -1,0 +1,12 @@
+ok 236       + compression_lz4                             5 ms
+ok 237       + compression_pglz                            6 ms
+ok 238       + cluster                                   139 ms
+# parallel group (2 tests):  oidjoins event_trigger
+ok 239       + oidjoins                                   84 ms
+ok 240       + event_trigger                             101 ms
+ok 241       - event_trigger_login                        14 ms
+ok 242       - fast_default                               95 ms
+ok 243       - tablespace                                180 ms
+1..243
+# All 243 tests passed.
+make[1]: Leaving directory '/home/muku/schoolfile/opensoft/project1/postgres-pmc-homework-https/.pmc-build/autoconf/src/test/regress'
